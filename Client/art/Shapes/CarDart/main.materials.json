@@ -1,0 +1,16 @@
+{
+  "CDRoundTargetMaterial": {
+    "name": "CDRoundTargetMaterial",
+    "mapTo": "CDRoundTargetMaterial",
+    "class": "Material",
+    "Stages": [
+      {
+        "colorMap": "RoundTarget"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp": "None"
+  }
+}
