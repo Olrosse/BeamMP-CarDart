@@ -1,0 +1,32 @@
+{
+  "ramp_Material": {
+    "name": "ramp_Material",
+    "mapTo": "ramp_Material",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_AmbientOcclusion.jpg",
+        "baseColorMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_Color.jpg",
+        "instanceDiffuse": true,
+        "metallicFactor": 1,
+        "metallicMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_Metalness.jpg",
+        "normalMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_NormalGL.jpg",
+        "roughnessMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_Roughness.jpg"
+      },
+      {
+        "instanceDiffuse": null,
+        "metallicFactor": null
+      },
+      {
+        "instanceDiffuse": null,
+        "metallicFactor": null
+      },
+      {
+        "instanceDiffuse": null,
+        "metallicFactor": null
+      }
+    ],
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

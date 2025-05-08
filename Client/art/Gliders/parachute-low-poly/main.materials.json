@@ -1,0 +1,16 @@
+{
+  "blinn1SG": {
+    "name": "blinn1SG",
+    "mapTo": "blinn1SG",
+    "class": "material",
+    "Stages": [
+      {
+        "colorMap": "Parachute_ColorBase"
+      },
+      {},
+      {},
+      {}
+    ],
+    "translucentBlendOp": "None"
+  }
+}

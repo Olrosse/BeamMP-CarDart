@@ -10,7 +10,7 @@ local playersThatAreOut = {}
 local timeNotifyOffset = 15 --s
 local roundLength = 90 --s
 local time = 0 --s
-local startWaitTime = 20 --s
+local startWaitTime = 10 --s 
 local roundRunning = false
 local autoRounds = false
 --TODO: fix countdown going slow
@@ -45,7 +45,7 @@ function onChatMessage(playerID, playerName, message)
 		-- elseif string.find(message, "list tracks") then --TODO: add track selection stuff
 		-- 	MP.SendChatMessage(playerID, "Tracks: " .. Util.JsonEncode(possibleTracks))
 		elseif string.find(message, "stop") then
-			MP.TriggerClientEvent(-1, "CDEndRound", "nil")
+			MP.TriggerClientEvent(-1, "CDEndRound", "1")
 			roundRunning = false
 			playerScore = {}
 			teams = {}
