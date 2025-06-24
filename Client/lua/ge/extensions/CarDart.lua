@@ -109,7 +109,7 @@ local function CDSetFreeze(freeze)
 			vehicle:queueLuaCommand('controller.setFreeze(' .. freeze .. ')')
 			if tonumber(freeze) == 1 then
 				vehicle:queueLuaCommand('if gliderPhysics then gliderPhysics.disableJumping() end')
-				vehicle:queueLuaCommand('if gliderPhysics then gliderPhysics.disableGliding() end')
+				--vehicle:queueLuaCommand('if gliderPhysics then gliderPhysics.disableGliding() end')
 			else
 				vehicle:queueLuaCommand('if gliderPhysics then gliderPhysics.enableJumping() end')
 				vehicle:queueLuaCommand('if gliderPhysics then gliderPhysics.enableGliding() end')
