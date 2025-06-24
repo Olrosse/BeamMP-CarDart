@@ -12,7 +12,42 @@
           0.793805003,
           1
         ],
-        "baseColorMap": "/art/shapes/CarDart/Targets/RoundTarget",
+        "baseColorMap": "/art/shapes/CarDart/Targets/RoundTarget.png",
+        "metallicFactor": 1,
+        "metallicMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_Metalness.jpg",
+        "normalMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_NormalDX.jpg",
+        "roughnessMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_Roughness.jpg"
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null
+      }
+    ],
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "LongsquareTargetMaterial": {
+    "name": "LongsquareTargetMaterial",
+    "mapTo": "LongsquareTargetMaterial",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_AmbientOcclusion.jpg",
+        "baseColorFactor": [
+          0.793805003,
+          0.793805003,
+          0.793805003,
+          1
+        ],
+        "baseColorMap": "/art/shapes/CarDart/Targets/LongSqareTarget.png",
         "metallicFactor": 1,
         "metallicMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_Metalness.jpg",
         "normalMap": "/art/shapes/CarDart/Ramps/Concrete042A_2K-JPG_NormalDX.jpg",

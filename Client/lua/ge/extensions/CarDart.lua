@@ -11,6 +11,9 @@ local team = nil
 local useFieldSystem
 
 local arenaOffset = vec3()
+local arenaRotOffsetEuler = vec3()
+local arenaRotOffsetQuat = quat()
+local floorHeight
 
 local function customDump(o)
     if type(o) == 'table' then
@@ -70,8 +73,9 @@ local function CDTeleportToStart()
 	for vehID, vehData in pairs(MPVehicleGE.getOwnMap()) do
 		local veh = be:getObjectByID(vehID)
 		if not veh then break end
-		local q = quatFromEuler(math.rad(spawnLocation.rx), math.rad(spawnLocation.ry), math.rad(spawnLocation.rz))
-		veh:setPositionRotation(spawnLocation.x + arenaOffset.x, spawnLocation.y + arenaOffset.y, spawnLocation.z + arenaOffset.z, q.x, q.y, q.z, q.w)
+		local finalSpawnPos = vec3(spawnLocation.x,spawnLocation.y,spawnLocation.z):rotated(arenaRotOffsetQuat)
+		local q = quatFromEuler(math.rad(spawnLocation.rx), math.rad(spawnLocation.ry), math.rad(spawnLocation.rz)) * arenaRotOffsetQuat
+		veh:setPositionRotation(finalSpawnPos.x + arenaOffset.x, finalSpawnPos.y + arenaOffset.y, finalSpawnPos.z + arenaOffset.z, q.x, q.y, q.z, q.w)
 		veh:queueLuaCommand("recovery.startRecovering()") --fix up the car because it might have been damaged
 		veh:queueLuaCommand("recovery.stopRecovering()")
 	end
@@ -85,7 +89,9 @@ end
 
 local function CDRemoveArena()
 	print("CDRemoveArena")
+	CarDartpointsTracker.clearAllTargets()
 	removePrefab(trackPrefabName)
+	floorHeight = nil
 	extensions['util_trackBuilder_splineTrack'].removeTrack()
 	for _, objectName in pairs(scenetree.getAllObjects()) do
 		if objectName:find("^procMesh") then 
@@ -134,8 +140,22 @@ local function CDSpawnArena(name)
 	currentArenaName = name
 	local metadata = jsonReadFile("art/" .. name .. ".metadata.json")
 	trackPrefabName   = name
-	arenaOffset = vec3(metadata.prefabLocation)
-	trackPrefabObj    = spawnPrefab(name, "art/" .. name .. ".prefab.json", ''..arenaOffset.x..' '..arenaOffset.y..' '..arenaOffset.z..'', '0 0 1', '1 1 1') --the prefab is the target
+	if metadata.prefabLocation then
+		arenaOffset = vec3(metadata.prefabLocation)
+	end
+	if metadata.prefabRotation then
+		arenaRotOffsetEuler = vec3(metadata.prefabRotation)
+		arenaRotOffsetQuat = quatFromEuler(metadata.prefabRotation.x,metadata.prefabRotation.y,metadata.prefabRotation.z)
+	end
+
+	trackPrefabObj = spawnPrefab(name, "art/" .. name .. ".prefab.json", ''..arenaOffset.x..' '..arenaOffset.y..' '..arenaOffset.z..'', ''..arenaRotOffsetEuler.x..' '..arenaRotOffsetEuler.y..' '..arenaRotOffsetEuler.z..'', '1 1 1') --the prefab is the target
+	if trackPrefabObj then
+		trackPrefabObj:setPosRot(arenaOffset.x,arenaOffset.y,arenaOffset.z,arenaRotOffsetQuat.x,arenaRotOffsetQuat.y,arenaRotOffsetQuat.z,arenaRotOffsetQuat.w)
+	end
+
+	if metadata.floorHeight then
+		floorHeight = metadata.floorHeight
+	end
 
 	if metadata.useFieldSystem then
 		CarDartpointsTracker.addTargets(name)
