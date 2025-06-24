@@ -190,16 +190,24 @@ end
 
 local function onCDOutOfBoundsTrigger(trigger)
 	print(customDump(trigger))
-	if not trigger.event == "enter" then return end
-	for ID, veh in pairs(MPVehicleGE.getOwnMap()) do
+	if trigger.event ~= "enter" then return end
+
+	local triggerObj = scenetree.findObject(trigger.triggerName)
+	local position = triggerObj:getPosition()
+	local boundingBox = triggerObj:getWorldBox():getExtents()
+	local triggerRoof = position.z + (boundingBox.z/2)
+
+	for ID, _ in pairs(MPVehicleGE.getOwnMap()) do
 		if ID ~= trigger.subjectID then break end
-		TriggerServerEvent("CDStrikePlayerOut", "nil")
 		local veh = be:getObjectByID(ID)
 		if veh then
-			veh:queueLuaCommand("controller.setFreeze(1)")
-			veh:queueLuaCommand("CarDartSpeedExplosion.explode()")
-			veh:queueLuaCommand('if gliderPhysics then gliderPhysics.disableJumping() end')
-			veh:queueLuaCommand('if gliderPhysics then gliderPhysics.disableGliding() end')
+			if  vec3(be:getObjectOOBBCenterXYZ(trigger.subjectID)).z < triggerRoof then -- TODO, make this check if center is in the trigger bounding box instead of just using altitude
+				TriggerServerEvent("CDStrikePlayerOut", "nil")
+				veh:queueLuaCommand("controller.setFreeze(1)")
+				veh:queueLuaCommand("CarDartSpeedExplosion.explode()")
+				veh:queueLuaCommand('if gliderPhysics then gliderPhysics.disableJumping() end')
+				veh:queueLuaCommand('if gliderPhysics then gliderPhysics.disableGliding() end')
+			end
 		end
 	end
 end
