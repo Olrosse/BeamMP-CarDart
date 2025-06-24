@@ -4,6 +4,7 @@ local pointTargets = {}
 local pointTriggers = {}
 local triggerPoints = {}
 local currentPoint = 0
+local loadedLevel = ""
 
 M.drawTargetDebug = false
 --CarDartpointsTracker.drawTargetDebug = true
@@ -57,13 +58,29 @@ end
 
 local function addTargets(name)
     loopTargets(name)
+    loadedLevel = name
 end
+
+local function clearAllTargets()
+    pointTargets = {}
+    pointTriggers = {}
+    triggerPoints = {}
+    currentPoint = 0
+    loadedLevel = ""
+end
+
+local queueRecalculatePoints = false
+local queueDelay = 0.100
+local queueTimer = 0
+local queueTimerFailSafe = 0
 
 local function recalculatePoint() -- iterate through all triggers to find the highest scoring one
     local newPoint = 0
+
     for _,triggerPoint in pairs(triggerPoints) do
         newPoint = math.max(newPoint,triggerPoint)
     end
+
     if newPoint ~= currentPoint then
         currentPoint = newPoint
         TriggerServerEvent("CDSetScore", currentPoint or "0")
@@ -74,7 +91,7 @@ local function onCDPointsTrackerTrigger(triggerData) --TODO make it possible to 
 	if not MPVehicleGE.isOwn(triggerData.subjectID) then return end
     local triggerCache = pointTriggers[triggerData.triggerName]
     if not triggerCache then return end
-    if triggerData.event == "tick" and triggerData.shape then
+    if triggerData.event == "tick" or triggerData.event == "enter" and triggerData.shape then
         local newPoint
         local veh = be:getObjectByID(triggerData.subjectID)
         local carCenterPos = vec3(be:getObjectOOBBCenterXYZ(triggerData.subjectID))
@@ -121,11 +138,17 @@ local function onCDPointsTrackerTrigger(triggerData) --TODO make it possible to 
         end
         if newPoint and newPoint ~= triggerPoints[triggerData.triggerName] then -- check to only update the point if it changed
             triggerPoints[triggerData.triggerName] = newPoint
-            recalculatePoint()
+            if newPoint == 0 then
+                queueTimer = queueDelay
+                queueRecalculatePoints = true
+            else
+                recalculatePoint()
+            end
         end
     elseif triggerData.event == "exit" then
         triggerPoints[triggerData.triggerName] = 0
-        recalculatePoint()
+        queueTimer = queueDelay
+        queueRecalculatePoints = true
     end
 end
 
@@ -257,6 +280,19 @@ local function targetDebugRenderer(dt)
     end
 end
 
+local function onUpdate(dt)
+    targetDebugRenderer(dt)
+    if queueRecalculatePoints then
+        queueTimer = queueTimer - dt
+        queueTimerFailSafe = queueTimerFailSafe + dt
+        if queueTimer < 0 or queueTimerFailSafe > 1 then
+            queueRecalculatePoints = false
+            queueTimerFailSafe = 0
+            recalculatePoint()
+        end
+    end
+end
+
 local function onEditorActivated()
     isEditorActive = true
 end
@@ -265,8 +301,9 @@ local function onEditorDeactivated()
     isEditorActive = false
 end
 
-M.onUpdate = targetDebugRenderer
+M.onUpdate = onUpdate
 M.addTargets = addTargets
+M.clearAllTargets = clearAllTargets
 M.onCDPointsTrackerTrigger = onCDPointsTrackerTrigger
 M.onEditorActivated = onEditorActivated
 M.onEditorDeactivated = onEditorDeactivated
